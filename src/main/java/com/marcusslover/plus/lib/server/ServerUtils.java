@@ -5,9 +5,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -15,9 +18,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 
 public class ServerUtils {
+
+    private ServerUtils() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * Returns every player that has joined this server in the past.
      *
@@ -33,7 +40,7 @@ public class ServerUtils {
      * @return List of UUID objects originating from the OfflinePlayer objects that have connected to the server.
      */
     public static List<UUID> getOfflinePlayerIdList() {
-        return getOfflinePlayerList().stream().map(OfflinePlayer::getUniqueId).collect(Collectors.toList());
+        return getOfflinePlayerList().stream().map(OfflinePlayer::getUniqueId).toList();
     }
 
     /**
@@ -42,7 +49,7 @@ public class ServerUtils {
      * @return List of String objects originating from the OfflinePlayer objects that have connected to the server.
      */
     public static List<String> getOfflinePlayerNameList() {
-        return getOfflinePlayerList().stream().map(OfflinePlayer::getName).collect(Collectors.toList());
+        return getOfflinePlayerList().stream().map(OfflinePlayer::getName).toList();
     }
 
     /**
@@ -60,7 +67,7 @@ public class ServerUtils {
      * @return List of UUID objects originating from the Player objects that are currently connected to the server.
      */
     public static List<UUID> getOnlinePlayerIdList() {
-        return getOnlinePlayerList().stream().map(OfflinePlayer::getUniqueId).collect(Collectors.toList());
+        return getOnlinePlayerList().stream().map(OfflinePlayer::getUniqueId).toList();
     }
 
     /**
@@ -69,7 +76,7 @@ public class ServerUtils {
      * @return List of String objects originating from the Player objects that are currently connected to the server.
      */
     public static List<String> getOnlinePlayerNameList() {
-        return getOnlinePlayerList().stream().map(Player::getName).collect(Collectors.toList());
+        return getOnlinePlayerList().stream().map(Player::getName).toList();
     }
 
     /**
@@ -107,36 +114,29 @@ public class ServerUtils {
      * @param <T>    The type of the class
      * @return The list of matching classes
      */
-    public static <T> List<Class<? extends T>> getExtendingClasses(Plugin plugin, Class<T> clazz) {
+    public static <T> List<Class<? extends T>> getExtendingClasses(@NotNull Plugin plugin, @NotNull Class<T> clazz) {
         List<Class<? extends T>> list = new ArrayList<>();
-        try {
+        try (JarFile file = new JarFile(new File(plugin.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()))) {
             ClassLoader loader = plugin.getClass().getClassLoader();
-            JarFile file = new JarFile(new File(plugin.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()));
             Enumeration<JarEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
-                if (entry.isDirectory()) {
-                    continue;
+                if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+                    String className = entry.getName().substring(0, entry.getName().length() - 6).replace("/", ".");
+                    try {
+                        Class<?> c = Class.forName(className, true, loader);
+                        if (clazz.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers()) && !c.isInterface()) {
+                            list.add(c.asSubclass(clazz));
+                        }
+                    } catch (ClassNotFoundException | NoClassDefFoundError ex) {
+                        // Ignore
+                    }
                 }
-                String name = entry.getName();
-                if (!name.endsWith(".class")) {
-                    continue;
-                }
-                name = name.substring(0, name.length() - 6).replace("/", ".");
-                Class<?> c;
-                try {
-                    c = Class.forName(name, true, loader);
-                } catch (ClassNotFoundException | NoClassDefFoundError ex) {
-                    continue;
-                }
-                if (!clazz.isAssignableFrom(c) || Modifier.isAbstract(c.getModifiers()) || c.isInterface()) {
-                    continue;
-                }
-                list.add((Class<? extends T>) c);
             }
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+        } catch (IOException | URISyntaxException e) {
+            throw new IllegalStateException("Failed to get classes", e);
         }
         return list;
     }
+
 }
