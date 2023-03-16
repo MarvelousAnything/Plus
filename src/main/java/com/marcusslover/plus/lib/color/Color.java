@@ -11,6 +11,7 @@ public class Color {
     private final int rgb;
 
     public Color(@NotNull java.awt.Color javaColor) {
+        // Mask out the alpha channel.
         this(javaColor.getRGB());
     }
 
@@ -23,6 +24,9 @@ public class Color {
     }
 
     public Color(int rgb) {
+        if ((rgb & 0xff000000) != 0) {
+            rgb &= 0x00ffffff;
+        }
         this.rgb = rgb;
     }
 
@@ -195,7 +199,7 @@ public class Color {
     @Override
     public String toString() {
         return "Color{" +
-                "rgb=" + this.rgb +
+                "rgb=" + Integer.toHexString(this.rgb) +
                 '}';
     }
 }

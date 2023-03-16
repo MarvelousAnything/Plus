@@ -5,19 +5,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CommandContextTest {
+class CommandContextTest {
     @SuppressWarnings("DataFlowIssue") // i know that sender can't be null but it doesn't matter here
     @Test
-    public void childContextTest() {
+    void childContextTest() {
         String[] parentArgs = new String[]{"world", "plus"};
         CommandContext context = new CommandContext(null, "hello", parentArgs);
         assertNull(context.parent());
-        assertEquals(context.label(), "hello");
+        assertEquals("hello", context.label());
         assertArrayEquals(context.args(), parentArgs);
 
         CommandContext child = context.child(1);
         assertEquals(context, child.parent());
-        assertEquals(child.label(), "world");
+        assertEquals("world", child.label());
         assertArrayEquals(child.args(), new String[]{parentArgs[1]});
     }
 }

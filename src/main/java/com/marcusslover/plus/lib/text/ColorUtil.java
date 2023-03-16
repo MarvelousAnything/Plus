@@ -1,8 +1,8 @@
 package com.marcusslover.plus.lib.text;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.Validate;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -12,70 +12,71 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ColorUtil {
     public static final Pattern HEX_TO_BUKKIT = Pattern.compile("&#([a-fA-F0-9]{6})");
     public static final Pattern HEX_FROM_BUKKIT = Pattern.compile("&x(&[a-fA-F0-9]){6}");
     public static final char COLOR_CHAR = '§';
     private static final Pattern HEX_PATTERN = Pattern.compile("^#([a-fA-F0-9]{6})$");
-    @SuppressWarnings("deprecation")
-    private static final EnumMap<DyeColor, ChatColor> dyeChatMap = new EnumMap<>(DyeColor.class) {{
-        this.put(DyeColor.BLACK, ChatColor.BLACK);
-        this.put(DyeColor.BLUE, ChatColor.DARK_BLUE);
-        this.put(DyeColor.BROWN, ChatColor.GOLD);
-        this.put(DyeColor.CYAN, ChatColor.AQUA);
-        this.put(DyeColor.GRAY, ChatColor.DARK_GRAY);
-        this.put(DyeColor.GREEN, ChatColor.DARK_GREEN);
-        this.put(DyeColor.LIGHT_BLUE, ChatColor.BLUE);
-        this.put(DyeColor.LIME, ChatColor.GREEN);
-        this.put(DyeColor.MAGENTA, ChatColor.LIGHT_PURPLE);
-        this.put(DyeColor.ORANGE, ChatColor.GOLD);
-        this.put(DyeColor.PINK, ChatColor.LIGHT_PURPLE);
-        this.put(DyeColor.PURPLE, ChatColor.DARK_PURPLE);
-        this.put(DyeColor.RED, ChatColor.DARK_RED);
-        this.put(DyeColor.LIGHT_GRAY, ChatColor.GRAY);
-        this.put(DyeColor.WHITE, ChatColor.WHITE);
-        this.put(DyeColor.YELLOW, ChatColor.YELLOW);
-    }};
+    private static final EnumMap<DyeColor, ChatColor> dyeChatMap = new EnumMap<>(DyeColor.class);
 
-    private static final EnumMap<Material, DyeColor> matDyeMap = new EnumMap<>(Material.class) {{
+    static {
+        dyeChatMap.put(DyeColor.BLACK, ChatColor.BLACK);
+        dyeChatMap.put(DyeColor.BLUE, ChatColor.DARK_BLUE);
+        dyeChatMap.put(DyeColor.BROWN, ChatColor.GOLD);
+        dyeChatMap.put(DyeColor.CYAN, ChatColor.AQUA);
+        dyeChatMap.put(DyeColor.GRAY, ChatColor.DARK_GRAY);
+        dyeChatMap.put(DyeColor.GREEN, ChatColor.DARK_GREEN);
+        dyeChatMap.put(DyeColor.LIGHT_BLUE, ChatColor.BLUE);
+        dyeChatMap.put(DyeColor.LIME, ChatColor.GREEN);
+        dyeChatMap.put(DyeColor.MAGENTA, ChatColor.LIGHT_PURPLE);
+        dyeChatMap.put(DyeColor.ORANGE, ChatColor.GOLD);
+        dyeChatMap.put(DyeColor.PINK, ChatColor.LIGHT_PURPLE);
+        dyeChatMap.put(DyeColor.PURPLE, ChatColor.DARK_PURPLE);
+        dyeChatMap.put(DyeColor.RED, ChatColor.DARK_RED);
+        dyeChatMap.put(DyeColor.LIGHT_GRAY, ChatColor.GRAY);
+        dyeChatMap.put(DyeColor.WHITE, ChatColor.WHITE);
+        dyeChatMap.put(DyeColor.YELLOW, ChatColor.YELLOW);
+    }
+
+    private static final EnumMap<Material, DyeColor> matDyeMap = new EnumMap<>(Material.class);
+    static {
         Arrays.stream(Material.values()).forEach(material -> {
             if (material.name().startsWith("WHITE")) {
-                this.put(material, DyeColor.WHITE);
+                matDyeMap.put(material, DyeColor.WHITE);
             } else if (material.name().startsWith("ORANGE")) {
-                this.put(material, DyeColor.ORANGE);
+                matDyeMap.put(material, DyeColor.ORANGE);
             } else if (material.name().startsWith("MAGENTA")) {
-                this.put(material, DyeColor.MAGENTA);
+                matDyeMap.put(material, DyeColor.MAGENTA);
             } else if (material.name().startsWith("LIGHT_BLUE")) {
-                this.put(material, DyeColor.LIGHT_BLUE);
+                matDyeMap.put(material, DyeColor.LIGHT_BLUE);
             } else if (material.name().startsWith("YELLOW")) {
-                this.put(material, DyeColor.YELLOW);
+                matDyeMap.put(material, DyeColor.YELLOW);
             } else if (material.name().startsWith("LIME")) {
-                this.put(material, DyeColor.LIME);
+                matDyeMap.put(material, DyeColor.LIME);
             } else if (material.name().startsWith("PINK")) {
-                this.put(material, DyeColor.PINK);
+                matDyeMap.put(material, DyeColor.PINK);
             } else if (material.name().startsWith("GRAY")) {
-                this.put(material, DyeColor.GRAY);
+                matDyeMap.put(material, DyeColor.GRAY);
             } else if (material.name().startsWith("LIGHT_GRAY")) {
-                this.put(material, DyeColor.LIGHT_GRAY);
+                matDyeMap.put(material, DyeColor.LIGHT_GRAY);
             } else if (material.name().startsWith("CYAN")) {
-                this.put(material, DyeColor.CYAN);
+                matDyeMap.put(material, DyeColor.CYAN);
             } else if (material.name().startsWith("PURPLE")) {
-                this.put(material, DyeColor.PURPLE);
+                matDyeMap.put(material, DyeColor.PURPLE);
             } else if (material.name().startsWith("BLUE")) {
-                this.put(material, DyeColor.BLUE);
+                matDyeMap.put(material, DyeColor.BLUE);
             } else if (material.name().startsWith("BROWN")) {
-                this.put(material, DyeColor.BROWN);
+                matDyeMap.put(material, DyeColor.BROWN);
             } else if (material.name().startsWith("GREEN")) {
-                this.put(material, DyeColor.GREEN);
+                matDyeMap.put(material, DyeColor.GREEN);
             } else if (material.name().startsWith("RED")) {
-                this.put(material, DyeColor.RED);
+                matDyeMap.put(material, DyeColor.RED);
             } else if (material.name().startsWith("BLACK")) {
-                this.put(material, DyeColor.BLACK);
+                matDyeMap.put(material, DyeColor.BLACK);
             }
         });
-    }};
+    }
 
     private ColorUtil() {
     }
@@ -125,12 +126,12 @@ public class ColorUtil {
     }
 
     public static @NotNull String hexTranslation(@NotNull String text) {
-        text = text.replaceAll("§", "&"); // legacy fix
+        text = text.replace("§", "&"); // legacy fix
         var matcher = HEX_FROM_BUKKIT.matcher(text);
         while (matcher.find()) {
             String group = matcher.group();
-            String translation = group.replaceAll("&x", "");
-            translation = translation.replaceAll("&", "");
+            String translation = group.replace("&x", "");
+            translation = translation.replace("&", "");
             translation = "&#" + translation;
             text = text.replaceAll(group, translation);
 
@@ -145,7 +146,7 @@ public class ColorUtil {
      * @return org.bukkit.Color
      */
     public static @NotNull Color getRGBFromCode(@NotNull String value) {
-        value = value.replaceAll("[{}]", "").replaceAll("&", "");
+        value = value.replaceAll("[{}]", "").replace("&", "");
         return HEX_PATTERN.matcher(value).matches() ? hex2Rgb(value) : minecraft2Rgb(value);
     }
 
@@ -206,7 +207,6 @@ public class ColorUtil {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public static @NotNull ChatColor dyeToChat(@NotNull DyeColor dye) {
         return dyeChatMap.getOrDefault(dye, ChatColor.RESET);
     }
@@ -215,12 +215,11 @@ public class ColorUtil {
         return matDyeMap.getOrDefault(material, DyeColor.WHITE);
     }
 
-    @SuppressWarnings("deprecation")
     public static @NotNull ChatColor materialToChat(@NotNull Material material) {
         return dyeToChat(materialToDye(material));
     }
 
     public static @NotNull List<String> translateList(@NotNull List<String> lore) {
-        return lore.stream().map(ColorUtil::hexTranslation).collect(Collectors.toList());
+        return lore.stream().map(ColorUtil::hexTranslation).toList();
     }
 }

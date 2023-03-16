@@ -159,7 +159,7 @@ public class Text implements ISendable<Text> {
 
     @Deprecated
     public static @NotNull List<@NotNull Text> list(@NotNull List<@NotNull Component> lore) {
-        return lore.stream().map(Text::new).collect(Collectors.toList());
+        return lore.stream().map(Text::new).toList();
     }
 
     /**
