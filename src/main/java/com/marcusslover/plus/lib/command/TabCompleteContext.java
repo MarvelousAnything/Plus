@@ -5,6 +5,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 public record TabCompleteContext(@NotNull CommandSender sender,
@@ -23,5 +24,28 @@ public record TabCompleteContext(@NotNull CommandSender sender,
             console.accept(c);
         }
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TabCompleteContext that = (TabCompleteContext) o;
+        return sender.equals(that.sender) && Arrays.equals(args, that.args);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = sender.hashCode();
+        result = 31 * result + Arrays.hashCode(args);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "TabCompleteContext{" +
+                "sender=" + sender +
+                ", args=" + Arrays.toString(args) +
+                '}';
     }
 }

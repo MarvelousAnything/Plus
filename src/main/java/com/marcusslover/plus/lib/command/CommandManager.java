@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+/**
+ * {@link CommandManager} is responsible for registering and unregistering commands.
+ * It stores a set of commands that are registered.
+ */
 public final class CommandManager {
     private final @NotNull Set<org.bukkit.command.Command> commandSet = new HashSet<>();
 
@@ -26,11 +30,24 @@ public final class CommandManager {
         this.plugin = plugin;
     }
 
-    @Deprecated
+    /**
+     * Creates a {@link CommandManager} instance for a plugin.
+     *
+     * @deprecated Use {@link CommandManager#CommandManager(Plugin)} instead.
+     * @param plugin The plugin to create the {@link CommandManager} instance for.
+     * @return A new {@link CommandManager} instance.
+     */
+    @Deprecated(forRemoval = true)
     public static @NotNull CommandManager get(@NotNull Plugin plugin) {
         return new CommandManager(plugin);
     }
 
+    /**
+     * Registers a command.
+     *
+     * @param command The command to register.
+     * @return The {@link CommandManager} instance to enable chaining.
+     */
     public @NotNull CommandManager register(@NotNull ICommand command) {
         Command commandAnnotation = this.getCommandAnnotation(command);
         if (commandAnnotation == null) {
@@ -72,6 +89,9 @@ public final class CommandManager {
         return this;
     }
 
+    /**
+     * @return A set of all registered commands.
+     */
     @NotNull
     public Set<org.bukkit.command.Command> getCommands() {
         return this.commandSet;
@@ -86,6 +106,9 @@ public final class CommandManager {
         return null;
     }
 
+    /**
+     * Clears all registered commands.
+     */
     public void clearCommands() {
         CommandMap commandMap = Bukkit.getCommandMap();
         List<String> keys = new ArrayList<>();
