@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * WorldPoints allow the storing of sets of coordinates without dealing with
+ * WorldPoints allow storing sets of coordinates without dealing with
  * chunk loading or world name storage. Unlike {@link Vector}, Positions allow
  * us to store a {@link #yaw} and {@link #pitch} as well as being easily serializable.
  */
@@ -465,8 +465,17 @@ public class WorldPoint {
         return Objects.hash(this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
+    /**
+     * @deprecated Use {@link #copy()} instead
+     * @return A new identical instance of {@link WorldPoint}
+     */
     @Override
+    @Deprecated(forRemoval = true)
     public WorldPoint clone() {
+        return new WorldPoint(this.x, this.y, this.z, this.yaw, this.pitch);
+    }
+
+    public WorldPoint copy() {
         return new WorldPoint(this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
@@ -477,11 +486,11 @@ public class WorldPoint {
 
         @Override
         public WorldPoint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            var _point = json.getAsJsonArray();
+            var point = json.getAsJsonArray();
 
             List<Number> numbers = new ArrayList<>();
-            for (var _num : _point) {
-                numbers.add(_num.getAsNumber());
+            for (var num : point) {
+                numbers.add(num.getAsNumber());
             }
 
             if (numbers.size() < 3) {
@@ -500,21 +509,21 @@ public class WorldPoint {
 
         @Override
         public JsonElement serialize(WorldPoint src, Type typeOfSrc, JsonSerializationContext context) {
-            var _point = new JsonArray();
+            var point = new JsonArray();
 
-            _point.add(src.getX());
-            _point.add(src.getY());
-            _point.add(src.getZ());
+            point.add(src.getX());
+            point.add(src.getY());
+            point.add(src.getZ());
 
             if (src.getYaw() != 0) {
-                _point.add(src.getYaw());
+                point.add(src.getYaw());
             }
 
             if (src.getPitch() != 0) {
-                _point.add(src.getPitch());
+                point.add(src.getPitch());
             }
 
-            return _point;
+            return point;
         }
     }
 }
