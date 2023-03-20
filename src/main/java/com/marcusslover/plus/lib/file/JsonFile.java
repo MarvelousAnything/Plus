@@ -12,7 +12,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Deprecated
+/**
+ * @deprecated Use {@link com.marcusslover.plus.lib.file.ConfigFile} instead.
+ */
+@Deprecated(forRemoval = true)
 public class JsonFile extends AbstractFile {
 
     protected JsonElement jsonElement;
@@ -53,8 +56,7 @@ public class JsonFile extends AbstractFile {
 
     @Override
     public void save() {
-        try {
-            FileWriter fileWriter = new FileWriter(this.file);
+        try (FileWriter fileWriter = new FileWriter(this.file)) {
             String json;
 
             if (this.gson == null) {
@@ -65,7 +67,6 @@ public class JsonFile extends AbstractFile {
 
             fileWriter.write(json);
             fileWriter.flush();
-            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -9,7 +9,7 @@ public abstract class AbstractFile implements IFile {
     @NotNull
     protected final File file;
 
-    public AbstractFile(@NotNull File file) {
+    protected AbstractFile(@NotNull File file) {
         if (!file.exists()) {
             try {
                 boolean fileNewFile = file.createNewFile();
