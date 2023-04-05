@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Text implements ISendable<Text> {
@@ -27,12 +26,12 @@ public class Text implements ISendable<Text> {
             .character('&')
             .build();
 
-    protected @NotNull String text;
+    protected @NotNull String textContent;
     protected @NotNull Component component;
 
-    private Text(@NotNull String text) {
+    private Text(@NotNull String textContent) {
         // Colorize the raw text before deserialization
-        this(ColorUtil.hex(text), LEGACY.deserialize(ColorUtil.hex(text)));
+        this(ColorUtil.hex(textContent), LEGACY.deserialize(ColorUtil.hex(textContent)));
     }
 
     private Text(@NotNull Component component) {
@@ -47,9 +46,15 @@ public class Text implements ISendable<Text> {
         return new Text(component);
     }
 
-    @Deprecated
+    /**
+     * @deprecated Use {@link #of(Component)} instead with streams.
+     *
+     * @param lore the lore components.
+     * @return the lore text components.
+     */
+    @Deprecated(since = "4.0.2-SNAPSHOT")
     public static @NotNull List<@NotNull Text> list(@NotNull List<@NotNull Component> lore) {
-        return lore.stream().map(Text::new).collect(Collectors.toList());
+        return lore.stream().map(Text::new).toList();
     }
 
     /**
@@ -101,7 +106,7 @@ public class Text implements ISendable<Text> {
     }
 
     public @NotNull Text append(@NotNull Text text) {
-        this.text += text.text;
+        this.textContent += text.textContent;
         this.component = this.component.append(text.component);
         return this;
     }
@@ -112,7 +117,7 @@ public class Text implements ISendable<Text> {
     }
 
     public @NotNull String raw() {
-        return this.text;
+        return this.textContent;
     }
 
     public @NotNull String stripped() {
@@ -120,7 +125,7 @@ public class Text implements ISendable<Text> {
     }
 
     public @NotNull String legacy() {
-        return Text.legacy(this.text);
+        return Text.legacy(this.textContent);
     }
 
     public boolean isEmpty() {
@@ -135,7 +140,7 @@ public class Text implements ISendable<Text> {
     }
 
     public @NotNull Text copy() {
-        return new Text(this.text, this.component);
+        return new Text(this.textContent, this.component);
     }
 
     @Override
@@ -169,7 +174,8 @@ public class Text implements ISendable<Text> {
         return this;
     }
 
-    public @NotNull <T extends CommandSender> Text sendActionBar(@NotNull T... targets) {
+    @SafeVarargs
+    public final @NotNull <T extends CommandSender> Text sendActionBar(@NotNull T... targets) {
         for (T sender : targets) {
             this.sendActionBar(sender);
         }

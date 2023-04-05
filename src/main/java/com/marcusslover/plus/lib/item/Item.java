@@ -72,6 +72,14 @@ public class Item extends Taggable<Item, ItemMeta> {
         this.lore(lore);
     }
 
+    /**
+     * Copy constructor.
+     * @param item the item to copy
+     */
+    public Item(@NotNull Item item) {
+        this(item.itemStack);
+    }
+
     public static @NotNull Item of() {
         return new Item(Material.STONE, 1);
     }
@@ -494,7 +502,13 @@ public class Item extends Taggable<Item, ItemMeta> {
         return this;
     }
 
+    /**
+     * @deprecated use {@link #Item(Item item)} instead.
+     *
+     * @return a clone of this item.
+     */
     @SuppressWarnings("MethodDoesntCallSuperMethod")
+    @Deprecated(since = "4.0.2-SNAPSHOT", forRemoval = true)
     public @NotNull Item clone() {
         return new Item(this.itemStack.clone());
     }
